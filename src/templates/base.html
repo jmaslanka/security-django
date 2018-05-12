@@ -3,10 +3,13 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>My site</title>
+  <title>{% block title %}My Security Site{% endblock title %}</title>
+  {% block styles %}{% endblock styles %}
+  {% block scripts_head %}{% endblock scripts_head %}
 </head>
 
 <body>
   {% block content %}{% endblock content %}
+  {% block scripts_body %}{% endblock scripts_body %}
 </body>
 </html>

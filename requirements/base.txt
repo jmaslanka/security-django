@@ -5,3 +5,4 @@ Django>=2.0
 psycopg2
 requests
 uwsgi
+zxcvbn

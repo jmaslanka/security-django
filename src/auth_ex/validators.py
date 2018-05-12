@@ -1,39 +1,28 @@
-import re
-import string
+from hashlib import sha1
 import requests
 
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
 
+from zxcvbn import zxcvbn
+
 
 class ComplexityValidator:
     '''
-    Validate whether the password has at least one of given characters:
-    - digit
-    - lower case
-    - upper case
-    - special
+    Validate password using zxcvbn password strength estimator.
+    Password must have at least score of 3 (good).
     '''
-    VALIDATORS = [
-        re.compile('\d'),  # digits
-        re.compile('[a-z]'),  # lowercase
-        re.compile('[A-Z]'),  # uppercase
-        re.compile(f'[{re.escape(string.punctuation)}]'),  # special
-    ]
 
     def validate(self, password, user=None):
-        checks = 0
-        for validator in self.VALIDATORS:
-            checks += 1 if validator.search(password) else 0
+        result = zxcvbn(password)
 
-        if checks < 3:
-            raise ValidationError(self.get_help_text())
+        if result['score'] < 3:
+            raise ValidationError(_(
+                'Password is too weak. Please use stronger password.'
+            ))
 
     def get_help_text(self):
-        return _(
-            'Password must contain 3 out of 4 characters: '
-            'lowercase, uppercase, digit, special.'
-        )
+        return _('Password cannot be too weak.')
 
 
 class HaveIBeenPwnedValidator:
@@ -41,19 +30,28 @@ class HaveIBeenPwnedValidator:
     Validate whether the password is found in HaveIBeenPwned DB.
     Source: https://haveibeenpwned.com/API/v2
     '''
-    URL = 'https://api.pwnedpasswords.com/pwnedpassword/{password}'
+    URL = 'https://api.pwnedpasswords.com/range/{hash_prefix}'
 
     def validate(self, password, user=None):
+        password_hash = sha1(password.encode('utf-8')).hexdigest()
+        password_prefix = password_hash[:5]
+
         response = requests.get(
-            url=self.URL.format(password=password),
+            url=self.URL.format(hash_prefix=password_prefix),
             headers={'user-agent': 'Registration-Checker'},
         )
-        if response.status_code == 200:
+
+        hashes_list = map(
+            lambda suffix: password_prefix + suffix.split(':')[0],
+            response.content.decode('utf-8').split('\r\n')
+        )
+
+        if password_hash in hashes_list:
             raise ValidationError(_(
-                'Your password was found on hacked passwords list. '
+                'Your password was found on leaked passwords list. '
                 'Use different password and change it '
                 'on sites where you are using it.'
             ))
 
     def get_help_text(self):
-        return _('Password must not be on hacked passwords list.')
+        return _('Password must not be on leaked passwords list.')
