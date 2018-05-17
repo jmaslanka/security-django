@@ -31,6 +31,8 @@ RUN rm requirements/ -rf \
 
 RUN addgroup -S django \
     && adduser -S -G django django \
-    && chown -R django:django /code \
+    && chown -R django:django /code
 
 USER django
+
+CMD uwsgi --ini=./uwsgi.ini
