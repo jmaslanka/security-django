@@ -21,7 +21,6 @@ services:
     env_file: .env
     networks:
       - default
-    command: uwsgi --ini=./docker/django/uwsgi.ini
     secrets:
       - secret_key
       - email_host

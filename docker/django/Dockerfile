@@ -35,4 +35,5 @@ RUN addgroup -S django \
 
 USER django
 
+ENV PYTHONPATH $PYTHONPATH:src
 CMD uwsgi --ini=./uwsgi.ini
