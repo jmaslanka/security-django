@@ -22,6 +22,12 @@ services:
     networks:
       - default
     command: uwsgi --ini=./docker/django/uwsgi.ini
+    secrets:
+      - secret_key
+      - email_host
+      - email_user
+      - email_password
+      - database_url
   bootstrap:
     image: 413915321176.dkr.ecr.eu-central-1.amazonaws.com/manager/django:${RELEASE}
     command: python src/manage.py bootstrap
@@ -34,6 +40,23 @@ services:
         delay: 5s
         max_attempts: 10
         window: 20s
+    secrets:
+      - secret_key
+      - email_host
+      - email_user
+      - email_password
+      - database_url
 networks:
   default:
     driver: overlay
+secrets:
+  secret_key:
+    external: true
+  email_host:
+    external: true
+  email_user:
+    external: true
+  email_password:
+    external: true
+  database_url:
+    external: true

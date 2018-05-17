@@ -11,9 +11,31 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import environ
+import os
+import re
 
 
-env = environ.Env()
+class DockerEnv(environ.Env):
+
+    def get_value(self, var, *args, **kwargs):
+        value = super().get_value(var, *args, **kwargs)
+
+        if isinstance(value, str):
+            # is file path is format like `/run/secrets/test_secret`
+            is_file_path_of_secret = re.match(r'^\/run\/secrets\/\w+$', value)
+            secret_file_exists = os.path.exists(value)
+            if is_file_path_of_secret and secret_file_exists:
+                value = self.get_value_from_secret_file(value)
+
+        return value
+
+    def get_value_from_secret_file(self, value):
+        with open(value, 'r') as secret_file:
+            # rstrip for deleting all new lines
+            return secret_file.read().rstrip('\r\n')
+
+
+env = DockerEnv()
 root = environ.Path(__file__) - 3
 
 BASE_DIR = root()
