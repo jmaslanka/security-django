@@ -23,8 +23,8 @@ services:
       dockerfile: ./docker/django/Dockerfile
       args:
         DJANGO_ENV: dev
-      env_file:
-        - .env
+    env_file:
+      - .env
     depends_on:
       - postgres
     command: uwsgi --ini=./docker/django/uwsgi.ini

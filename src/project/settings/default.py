@@ -15,7 +15,6 @@ import environ
 
 env = environ.Env()
 root = environ.Path(__file__) - 3
-environ.Env.read_env(env_file=(root - 1)('.env'))
 
 BASE_DIR = root()
 SECRET_KEY = env('SECRET_KEY')
@@ -124,3 +123,6 @@ EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='')
 EMAIL_PORT = env('EMAIL_PORT', default=587)
 EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=False)
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default='root@localhost')
+
+SESSION_COOKIE_SAMESITE = 'Strict'  # Will be added in 2.1
+CSRF_COOKIE_SAMESITE = 'Strict'  # Will be added in 2.1

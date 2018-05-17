@@ -8,13 +8,13 @@ RUN apk update
 RUN apk add \
     build-base \
     zlib-dev \
-    jpeg-dev \
     python3-dev \
     py3-psycopg2 \
     libressl-dev \
     libffi-dev \
     postgresql-dev \
-    linux-headers
+    linux-headers \
+    git
 
 WORKDIR /code
 
@@ -32,10 +32,5 @@ RUN rm requirements/ -rf \
 RUN addgroup -S django \
     && adduser -S -G django django \
     && chown -R django:django /code \
-    && mkdir media static \
-    && chown -R django:django media \
-    && chown -R django:django static
 
 USER django
-
-CMD uwsgi --ini=./uwsgi.ini

@@ -1,7 +1,7 @@
 argon2-cffi
 django-environ
 django-extensions
-Django>=2.0
+git+https://github.com/django/django.git@master#egg=django
 psycopg2
 requests
 uwsgi
