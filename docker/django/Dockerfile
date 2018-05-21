@@ -1,20 +1,18 @@
-FROM python:3.7.0b4-alpine3.7
+FROM python:3.7.0b4-slim
 
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONPATH $PYTHONPATH:src
 ARG DJANGO_ENV
 
-RUN apk update
-RUN apk add \
-    build-base \
-    zlib-dev \
-    python3-dev \
-    py3-psycopg2 \
-    libressl-dev \
+RUN apt update && apt-get install -y \
     libffi-dev \
-    postgresql-dev \
-    linux-headers \
-    git
+    gettext \
+    git \
+    python3-dev \
+    libpq-dev \
+    gcc \
+    python3-psycopg2
+
 
 WORKDIR /code
 
@@ -29,9 +27,8 @@ RUN rm requirements/ -rf \
     && mv docker/django/uwsgi.ini uwsgi.ini \
     && rm docker/ -rf
 
-RUN addgroup -S django \
-    && adduser -S -G django django \
-    && chown -R django:django /code
+RUN adduser --disabled-password --gecos '' django \
+    && chown -R django /code
 
 USER django
 

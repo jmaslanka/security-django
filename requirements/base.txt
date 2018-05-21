@@ -1,8 +1,9 @@
 argon2-cffi
 django-environ
 django-extensions
-git+https://github.com/django/django.git@master#egg=django
+git+https://github.com/django/django.git@2.1a1#egg=django
 psycopg2
+raven
 requests
 uwsgi
 zxcvbn
