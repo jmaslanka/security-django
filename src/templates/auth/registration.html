@@ -1,17 +1,18 @@
 {% extends "base.html" %}
+
 {% load static %}
 
 {% block title %}Registration{% endblock title %}
 
 {% block styles %}
   {{ block.super }}
-  <link rel="stylesheet" href="{% static "css/registration.css" %}">
+  <link rel="stylesheet" href="{% static 'auth_ex/css/registration.css' %}">
 {% endblock styles %}
 
 {% block content %}
 <form method="post">
   {% csrf_token %}
-  {{ form.as_p }}
+  {{ form }}
   <div class="password-meter">
     <meter max="4" id="password-strength-meter"></meter>
     <p id="password-strength-text"></p>
@@ -22,6 +23,6 @@
 
 {% block scripts_body %}
   {{ block.super }}
-  <script type="text/javascript" src="{% static "js/zxcvbn.js" %}"></script>
-  <script type="text/javascript" src="{% static "js/registration.js" %}"></script>
+  <script type="text/javascript" src="{% static 'auth_ex/js/zxcvbn.js' %}"></script>
+  <script type="text/javascript" src="{% static 'auth_ex/js/registration.js' %}"></script>
 {% endblock scripts_body %}

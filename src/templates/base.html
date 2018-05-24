@@ -1,10 +1,14 @@
 <!doctype html>
 
+{% load static %}
+
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <title>{% block title %}My Security Site{% endblock title %}</title>
-  {% block styles %}{% endblock styles %}
+  {% block styles %}
+    <link rel="stylesheet" href="{% static 'project/css/normalize.css' %}">
+  {% endblock styles %}
   {% block scripts_head %}{% endblock scripts_head %}
 </head>
 

@@ -28,7 +28,8 @@ RUN rm requirements/ -rf \
     && rm docker/ -rf
 
 RUN adduser --disabled-password --gecos '' django \
-    && chown -R django /code
+    && chown -R django /code \
+    && chown -R django /static
 
 USER django
 

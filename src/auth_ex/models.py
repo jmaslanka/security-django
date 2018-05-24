@@ -64,7 +64,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         _('active'),
         default=False,
         help_text=_(
-            'Designates whether this user should be treated as active. '
+            'Designates whether this user should be treated as active.'
         ),
     )
     date_joined = models.DateTimeField(
