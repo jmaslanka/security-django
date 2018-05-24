@@ -1,8 +1,8 @@
 # Project
 
-## Random project to experiment with Django and security.  
+### Random project to experiment with Django and security.  
 
-#### SSL configuration is quite restrictive. Enabling TLsv1.1 (or 1.0) can help, DP params are enabled only with 256 bit keys.
+#### SSL configuration is quite restrictive. Enabling TLsv1.1 (or 1.0) can help, DH params are enabled only with 256 bit keys.
 
 ![SSL configuration](https://s3.eu-central-1.amazonaws.com/manager-static/manual_upload/f1b7eb93-194a-4e18-b103-a10e469285fb.png)
 
