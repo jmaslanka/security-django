@@ -4,10 +4,13 @@ from django.contrib.staticfiles import views
 from django.urls import include, path, re_path
 from django.views.static import serve
 
+from .views import HomepageView
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', HomepageView.as_view(), name='homepage'),
 
-    path('auth/', include('auth_ex.urls')),
+    path('auth/', include('auth_ex.urls', namespace='auth')),
 ]
 
 if settings.DEBUG:

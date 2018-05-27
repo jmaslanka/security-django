@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% load static recaptcha2 %}
+
+{% block title %}Login{% endblock title %}
+
+
+{% block scripts_head %}
+  {{ block.super }}
+  <script src="{% static 'auth_ex/js/recaptcha_api.js' %}"></script>
+{% endblock scripts_head %}
+
+{% block content %}
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    {% recaptcha %}
+    <input id="submit-form" type="submit" value="Login" />
+  </form>
+  <a href="{% url 'homepage' %}"><button>Back to homepage</button></a>
+{% endblock content %}

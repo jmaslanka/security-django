@@ -148,3 +148,6 @@ DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default='root@localhost')
 
 SESSION_COOKIE_SAMESITE = 'Strict'  # Will be added in 2.1
 CSRF_COOKIE_SAMESITE = 'Strict'  # Will be added in 2.1
+
+RECAPTCHA_PUBLIC_KEY = env('RECAPTCHA_PUBLIC_KEY', default='')
+RECAPTCHA_PRIVATE_KEY = env('RECAPTCHA_PRIVATE_KEY', default='')

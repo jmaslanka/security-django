@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load static %}
+{% load static recaptcha2 %}
 
 {% block title %}Registration{% endblock title %}
 
@@ -9,16 +9,23 @@
   <link rel="stylesheet" href="{% static 'auth_ex/css/registration.css' %}">
 {% endblock styles %}
 
+{% block scripts_head %}
+  {{ block.super }}
+  <script src="{% static 'auth_ex/js/recaptcha_api.js' %}"></script>
+{% endblock scripts_head %}
+
 {% block content %}
-<form method="post">
-  {% csrf_token %}
-  {{ form }}
-  <div class="password-meter">
-    <meter max="4" id="password-strength-meter"></meter>
-    <p id="password-strength-text"></p>
-  </div>
-  <input id="submit-form" type="submit" value="Register" disabled />
-</form>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="password-meter">
+      <meter max="4" id="password-strength-meter"></meter>
+      <p id="password-strength-text"></p>
+    </div>
+    {% recaptcha %}
+    <input id="submit-form" type="submit" value="Register" disabled />
+  </form>
+  <a href="{% url 'homepage' %}"><button>Back to homepage</button></a>
 {% endblock content %}
 
 {% block scripts_body %}

@@ -29,6 +29,7 @@ RUN rm requirements/ -rf \
 
 RUN adduser --disabled-password --gecos '' django \
     && chown -R django /code \
+    && mkdir /static \
     && chown -R django /static
 
 USER django
