@@ -30,6 +30,7 @@ services:
       - sentry_url
       - aws_static_id
       - aws_static_secret
+      - recaptcha_private_key
   bootstrap:
     image: 413915321176.dkr.ecr.eu-central-1.amazonaws.com/manager/django:${RELEASE}
     command: python src/manage.py bootstrap
@@ -70,4 +71,6 @@ secrets:
   aws_static_id:
     external: true
   aws_static_secret:
+    external: true
+  recaptcha_private_key:
     external: true
