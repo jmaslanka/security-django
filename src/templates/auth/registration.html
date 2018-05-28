@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load static recaptcha2 %}
+{% load static recaptcha2 crispy_forms_tags %}
 
 {% block title %}Registration{% endblock title %}
 
@@ -17,10 +17,10 @@
 {% block content %}
   <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ form|crispy }}
     <div class="password-meter">
       <meter max="4" id="password-strength-meter"></meter>
-      <p id="password-strength-text"></p>
+      <p>Password strength: <strong id="password-strength-text">None</strong></p>
     </div>
     {% recaptcha %}
     <input id="submit-form" type="submit" value="Register" disabled />

@@ -1,4 +1,5 @@
 argon2-cffi
+django-crispy-forms
 django-environ
 django-extensions
 django-ipware

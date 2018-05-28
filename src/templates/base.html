@@ -8,8 +8,13 @@
   <title>{% block title %}My Security Site{% endblock title %}</title>
   {% block styles %}
     <link rel="stylesheet" href="{% static 'project/css/normalize.css' %}">
+    <link rel="stylesheet" href="{% static 'project/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'project/css/bootstrap.min.css.map' %}">
   {% endblock styles %}
-  {% block scripts_head %}{% endblock scripts_head %}
+  {% block scripts_head %}
+    <script src="{% static 'project/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'project/js/bootstrap.bundle.min.js.map' %}"></script>
+  {% endblock scripts_head %}
 </head>
 
 <body>

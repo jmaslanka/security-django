@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load static recaptcha2 %}
+{% load static recaptcha2 crispy_forms_tags %}
 
 {% block title %}Login{% endblock title %}
 
@@ -13,7 +13,7 @@
 {% block content %}
   <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ form|crispy }}
     {% recaptcha %}
     <input id="submit-form" type="submit" value="Login" />
   </form>

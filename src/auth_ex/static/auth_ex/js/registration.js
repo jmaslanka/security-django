@@ -24,9 +24,9 @@ password1.addEventListener('input', function() {
   meter.value = score;
 
   if (val !== "") {
-    text.innerHTML = "Strength: " + "<strong>" + strength[score] + "</strong>"; 
+    text.textContent = strength[score];
   } else {
-    text.innerHTML = "";
+    text.textContent = "None";
   }
 });
 

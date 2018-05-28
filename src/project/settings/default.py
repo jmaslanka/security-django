@@ -14,8 +14,11 @@ import environ
 import os
 import re
 
+from django.urls import reverse_lazy
+
 
 class DockerEnv(environ.Env):
+    # Author: Mateusz Kamycki https://github.com/toffi9
 
     def get_value(self, var, *args, **kwargs):
         value = super().get_value(var, *args, **kwargs)
@@ -44,9 +47,6 @@ DEBUG = env.bool('DEBUG', default=False)
 SITE_ID = env.int('SITE_ID', default=1)
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost'])
 
-AUTH_USER_MODEL = 'auth_ex.User'
-
-
 LOCAL_APPS = [
     'project',
     'auth_ex',
@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'django_extensions',
+    'crispy_forms',
 ] + LOCAL_APPS
 
 MIDDLEWARE = [
@@ -72,6 +73,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'project.urls'
+WSGI_APPLICATION = 'project.wsgi.application'
 
 TEMPLATES = [
     {
@@ -88,7 +90,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'project.wsgi.application'
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
 
 DATABASES = {
     'default': env.db(
@@ -96,6 +99,14 @@ DATABASES = {
     )
 }
 
+
+# ----------------------- AUTH ----------------------------------
+
+
+AUTH_USER_MODEL = 'auth_ex.User'
+LOGIN_URL = reverse_lazy('auth:login')
+LOGIN_REDIRECT_URL = reverse_lazy('homepage')
+LOGOUT_REDIRECT_URL = reverse_lazy('homepage')
 
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.Argon2PasswordHasher',
@@ -120,6 +131,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 PASSWORD_RESET_TIMEOUT_DAYS = 1
 
+
+# ---------------------------------------------------------------
 
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'

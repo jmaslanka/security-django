@@ -6,6 +6,14 @@
 
 {% block content %}
   <h1>Main page</h1>
-  <a href="{% url 'auth:login' %}"><button>Login</button></a>
-  <a href="{% url 'auth:signup' %}"><button>Sign up</button></a>
+
+  {% if user.is_authenticated %}
+    <p>Hello, {{ user.first_name }}. You are logged in.</p>
+    <a href="{% url 'auth:logout' %}"><button>Logout</button></a>
+  {% else %}
+    <p>Hello guest. You are not logged in.</p>
+    <a href="{% url 'auth:login' %}"><button>Login</button></a>
+    <a href="{% url 'auth:signup' %}"><button>Sign up</button></a>
+  {% endif %}
+
 {% endblock content %}
