@@ -1,0 +1,67 @@
+.logs {
+    border-collapse: collapse;
+    border-spacing: 0;
+    border: none;
+    border-color: #aaa;
+}
+
+.logs th {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: normal;
+    padding: 10px 5px;
+    border-style: solid;
+    border-width: 0px;
+    overflow: hidden;
+    word-break: normal;
+    border-color: #aaa;
+    color: #fff;
+    background-color: #f38630;
+}
+
+.logs td {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    padding: 10px 5px;
+    border-style: solid;
+    border-width: 0px;
+    overflow: hidden;
+    word-break: normal;
+    border-color: #aaa;
+    color: #333;
+    background-color: #fff;
+}
+
+.logs tr.header th {
+    border-color: inherit;
+    vertical-align: top;
+    text-align: center;
+    font-weight: bold;
+}
+
+.logs tr.body-even td {
+    background-color: #FCFBE3;
+    border-color: inherit;
+    vertical-align: top
+}
+
+.logs tr.body-odd td {
+    border-color: inherit;
+    vertical-align: top;
+}
+
+@media screen and (max-width:767px) {
+    .logs {
+        width: auto !important;
+    }
+
+    .logs col {
+        width: auto !important;
+    }
+
+    .logs-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+}

@@ -14,8 +14,6 @@ import environ
 import os
 import re
 
-from django.urls import reverse_lazy
-
 
 class DockerEnv(environ.Env):
     # Author: Mateusz Kamycki https://github.com/toffi9
@@ -50,6 +48,7 @@ ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost'])
 LOCAL_APPS = [
     'project',
     'auth_ex',
+    'manager',
 ]
 
 INSTALLED_APPS = [
@@ -104,9 +103,9 @@ DATABASES = {
 
 
 AUTH_USER_MODEL = 'auth_ex.User'
-LOGIN_URL = reverse_lazy('auth:login')
-LOGIN_REDIRECT_URL = reverse_lazy('homepage')
-LOGOUT_REDIRECT_URL = reverse_lazy('homepage')
+LOGIN_URL = 'auth:login'
+LOGIN_REDIRECT_URL = 'homepage'
+LOGOUT_REDIRECT_URL = 'homepage'
 
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.Argon2PasswordHasher',
@@ -164,3 +163,5 @@ CSRF_COOKIE_SAMESITE = 'Strict'  # Will be added in 2.1
 
 RECAPTCHA_PUBLIC_KEY = env('RECAPTCHA_PUBLIC_KEY', default='')
 RECAPTCHA_PRIVATE_KEY = env('RECAPTCHA_PRIVATE_KEY', default='')
+
+GEOIP_PATH = env('GEOIP_PATH', default=root('project/geolite2/'))

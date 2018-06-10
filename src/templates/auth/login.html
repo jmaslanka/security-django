@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load static recaptcha2 crispy_forms_tags %}
+{% load static i18n recaptcha2 crispy_forms_tags %}
 
 {% block title %}Login{% endblock title %}
 
@@ -11,11 +11,16 @@
 {% endblock scripts_head %}
 
 {% block content %}
+
   <form method="post">
+
     {% csrf_token %}
     {{ form|crispy }}
     {% recaptcha %}
-    <input id="submit-form" type="submit" value="Login" />
+    <input id="submit-form" type="submit" value="{% trans 'Login' %}" />
+
   </form>
+
   <a href="{% url 'homepage' %}"><button>Back to homepage</button></a>
+
 {% endblock content %}

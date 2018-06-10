@@ -2,7 +2,10 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as djUserAdmin
 from django.utils.translation import gettext_lazy as _
 
-from .models import User
+from .models import (
+    User,
+    Log,
+)
 
 
 class UserAdmin(djUserAdmin):
@@ -34,4 +37,24 @@ class UserAdmin(djUserAdmin):
     )
 
 
+class LogsAdmin(admin.ModelAdmin):
+    list_display = (
+        'type',
+        'user_id',
+        'date',
+    )
+    list_filter = (
+        'type',
+    )
+    search_fields = (
+        'user__id',
+        'user__email',
+        'location',
+    )
+    ordering = (
+        '-date',
+    )
+
+
 admin.site.register(User, UserAdmin)
+admin.site.register(Log, LogsAdmin)

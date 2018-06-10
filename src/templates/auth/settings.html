@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% load i18n static %}
+
+{% block title %}Settings{% endblock title %}
+
+{% block styles %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'auth_ex/css/logs.css' %}">
+{% endblock styles %}
+
+
+{% block content %}
+
+  <h1>{% trans 'Settings' %}</h1>
+
+  <h3>{% trans 'Logs' %}</h3>
+  {% if logs %}
+    <div class='logs-wrap'>
+
+      <table class='logs'>
+        <tr class='header'>
+          <th>{% trans 'Type' %}</th>
+          <th>{% trans 'Date' %}</th>
+          <th>{% trans 'IP address' %}</th>
+          <th>{% trans 'Location' %}</th>
+          <th>{% trans 'User agent' %}</th>
+        </tr>
+        {% for log in logs %}
+          <tr class='{% cycle "body-odd" "body-even" %}'>
+            <td>{{ log.get_type_display }}</td>
+            <td>{{ log.date }}</td>
+            <td>{% if log.ip %} {{ log.ip }} {% endif %}</td>
+            <td>{% if log.location %} {{ log.location }} {% endif %}</td>
+            <td>{% if log.user_agent %} {{ log.user_agent }} {% endif %}</td>
+          </tr>
+        {% endfor %}
+      </table>
+      {% if logs.has_previous %}
+        <a href="?logs-page=1">&laquo; {% trans 'First' %}</a>
+        <a href="?page={{ logs.previous_page_number }}">{% trans 'Previous' %}</a>
+      {% endif %}
+
+      <span class="current">
+        {% trans 'Page' %} {{ logs.number }} {% trans 'of' %} {{ logs.paginator.num_pages }}.
+      </span>
+
+      {% if logs.has_next %}
+        <a href="?logs-page={{ logs.next_page_number }}">{% trans 'Next' %}</a>
+        <a href="?logs-page={{ logs.paginator.num_pages }}">{% trans 'Last' %} &raquo;</a>
+      {% endif %}
+    </div>
+  {% else %}
+    <p>{% trans 'No logs to display.' %}</p>
+  {% endif %}
+
+  {% if user.has_mfa_enabled %}
+    <p class="text-success">{% trans 'Your MFA is activated.' %}</p>
+  {% else %}
+    <p class="text-danger">{% trans 'You do not have MFA set up.' %}</p>
+  {% endif %}
+  
+
+  <a href="{% url 'homepage' %}"><button class="btn btn-primary">{% trans 'Back to homepage' %}</button></a>
+  <a href="{% url 'auth:mfa' %}"><button class="btn btn-primary">{% trans 'MFA settings' %}</button></a>
+  <p>
+    This product includes GeoLite2 data created by MaxMind, available from
+    <a href="http://www.maxmind.com">http://www.maxmind.com</a>.
+  </p>
+
+{% endblock content %}

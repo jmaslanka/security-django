@@ -6,7 +6,7 @@ from django.db.models.functions import Now
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from project.utils import ChoiceEnum
+from model_utils import Choices
 
 
 class Safe(models.Model):
@@ -21,6 +21,7 @@ class Safe(models.Model):
     )
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
         verbose_name=_('owner'),
         related_name='safes',
     )
@@ -61,6 +62,7 @@ class SafeItem(models.Model):
     )
     safe = models.ForeignKey(
         Safe,
+        on_delete=models.CASCADE,
         verbose_name=_('safe'),
         related_name='items',
     )
@@ -71,32 +73,35 @@ class SafeItem(models.Model):
     )
 
 
-class FieldTypes(ChoiceEnum):
-    '''
-    Types of data for fields.
-    '''
-    text = _('Text')
-    password = _('Password')
-    date = _('Date')
-    email = _('Email')
-    url = _('Url')
-    otp = _('One-Time Password')
-
-
 class ItemField(models.Model):
     '''
     Model representing single field in safe item.
     '''
+
+    TYPES = Choices(
+        ('text', _('Text')),
+        ('password', _('Password')),
+        ('date', _('Date')),
+        ('email', _('Email')),
+        ('url', _('URL')),
+        ('otp', _('One-Time Password')),
+    )
 
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
         editable=False,
     )
+    item = models.ForeignKey(
+        SafeItem,
+        on_delete=models.CASCADE,
+        verbose_name=_('safe item'),
+        related_name='fields',
+    )
     type = models.CharField(
         _('type'),
         max_length=24,
-        choices=FieldTypes,
+        choices=TYPES,
     )
     name = models.CharField(
         _('name'),

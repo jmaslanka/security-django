@@ -11,7 +11,8 @@ RUN apt update && apt-get install -y \
     python3-dev \
     libpq-dev \
     gcc \
-    python3-psycopg2
+    python3-psycopg2 \
+    libmaxminddb0 libmaxminddb-dev mmdb-bin
 
 
 WORKDIR /code

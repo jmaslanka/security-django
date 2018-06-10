@@ -1,34 +1,15 @@
-from enum import Enum, EnumMeta
 import logging
 import requests
 
 from django.conf import settings
+from django.contrib.gis.geoip2 import GeoIP2
 from django.utils.translation import gettext_lazy as _
 
 from ipware import get_client_ip
+from user_agents import parse as parse_ua
 
 
 logger = logging.getLogger(__name__)
-
-
-class ChoiceEnumMeta(EnumMeta):
-    def __iter__(self):
-        return ((tag, tag.value) for tag in super().__iter__())
-
-
-class ChoiceEnum(Enum, metaclass=ChoiceEnumMeta):
-    '''
-    Author: https://github.com/treyhunner
-    Usage:
-
-        class Gender(ChoiceEnum):
-            male = 'male'
-            female = 'female'
-            no_answer = 'no-answer'
-
-        models.CharField(max_length=10, choices=Gender)
-    '''
-    pass
 
 
 def is_valid_recaptcha(request) -> bool:
@@ -70,3 +51,33 @@ def is_valid_recaptcha(request) -> bool:
         logger.error(_('Invalid reCAPTCHA secret.'))
 
     return False
+
+
+def get_client_details(request) -> dict:
+    '''
+    Given valid request returns user's ip, location and user-agent.
+    '''
+    if not request:
+        return dict()
+
+    client_ip, is_routable = get_client_ip(request)
+    client_ip = client_ip if client_ip and is_routable else None
+    location = ''
+
+    if client_ip:
+        result = GeoIP2().city(client_ip)
+        location = '{city}, {country}'.format(
+            country=result.get('country_name', ''),
+            city=result.get('city', ''),
+        )
+
+    user_agent = request.META.get('HTTP_USER_AGENT', '')
+
+    if user_agent:
+        user_agent = str(parse_ua(user_agent))
+
+    return {
+        'ip': client_ip,
+        'location': location,
+        'user_agent': user_agent,
+    }

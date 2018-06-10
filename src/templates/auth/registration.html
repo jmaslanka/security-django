@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 
-{% load static recaptcha2 crispy_forms_tags %}
+{% load static i18n recaptcha2 crispy_forms_tags %}
 
 {% block title %}Registration{% endblock title %}
+
 
 {% block styles %}
   {{ block.super }}
@@ -15,17 +16,24 @@
 {% endblock scripts_head %}
 
 {% block content %}
+
   <form method="post">
+
     {% csrf_token %}
     {{ form|crispy }}
+
     <div class="password-meter">
       <meter max="4" id="password-strength-meter"></meter>
-      <p>Password strength: <strong id="password-strength-text">None</strong></p>
+      <p>{% trans 'Password strength:' %} <strong id="password-strength-text">None</strong></p>
     </div>
+
     {% recaptcha %}
-    <input id="submit-form" type="submit" value="Register" disabled />
+    <input id="submit-form" type="submit" value="{% trans 'Register' %}" disabled />
+
   </form>
-  <a href="{% url 'homepage' %}"><button>Back to homepage</button></a>
+
+  <a href="{% url 'homepage' %}"><button>{% trans 'Back to homepage' %}</button></a>
+
 {% endblock content %}
 
 {% block scripts_body %}
