@@ -1,4 +1,4 @@
-FROM python:3.7.0b4-slim
+FROM python:3.7-slim
 
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONPATH $PYTHONPATH:src
