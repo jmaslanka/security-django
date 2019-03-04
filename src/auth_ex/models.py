@@ -173,7 +173,7 @@ class UserOTP(models.Model):
     )
     secret_key = models.CharField(
         _('secret_key'),
-        max_length=127,
+        max_length=32,
     )
     recovery_codes = ArrayField(
         models.CharField(max_length=10),

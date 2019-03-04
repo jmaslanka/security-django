@@ -1,12 +1,15 @@
 import pyotp
 
+from django.conf import settings
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.views import LoginView
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
+from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
+from django.views.decorators.cache import never_cache
 from django.views.generic import (
     TemplateView,
     FormView,
@@ -14,7 +17,6 @@ from django.views.generic import (
 from django.views.generic.edit import CreateView
 
 
-from project.utils import get_client_details
 from .models import (
     User,
     Log,
@@ -44,6 +46,7 @@ class RegistrationView(CreateView):
         return kwargs
 
 
+@method_decorator(never_cache, name='dispatch')
 class LoginView(LoginView):
     form_class = LoginForm
     template_name = 'auth/login.html'
@@ -65,10 +68,7 @@ class LoginView(LoginView):
         user = None
 
         if email:
-            try:
-                user = User.objects.get(email=email)
-            except User.DoesNotExist:
-                pass
+            user = User.objects.filter(email=email).first()
 
         create_log_entry(
             log_type=Log.TYPES.invalid_login,
@@ -91,7 +91,9 @@ class SettingsView(TemplateView):
             self.logs_paginate_by,
         )
 
-        kwargs['logs'] = paginator.get_page(self.request.GET.get('logs-page'))
+        kwargs['logs'] = paginator.get_page(
+            self.request.GET.get('logs-page')
+        )
 
         return kwargs
 
@@ -107,9 +109,9 @@ class MFAView(FormView):
     def get_initial(self):
         initial = super().get_initial()
 
-        initial['secret'] = pyotp.random_base32()
+        initial['secret'] = pyotp.random_base32(length=32)
         initial['link'] = pyotp.TOTP(initial['secret']).provisioning_uri(
-            self.request.user.email, 'DjangoButtermilk',
+            self.request.user.email, settings.MFA_APPLICATION_NAME,
         )
 
         return initial
@@ -121,7 +123,9 @@ class MFAView(FormView):
 
     def form_valid(self, form):
         context = self.get_context_data()
+
         if self.request.user.has_mfa_enabled():
+
             if 'disable' in self.request.POST:
                 self.request.user.otp.delete()
                 create_log_entry(
@@ -130,6 +134,7 @@ class MFAView(FormView):
                     user=self.request.user,
                 )
                 return redirect(reverse('auth:mfa'))
+
             elif 'new_codes' in self.request.POST:
                 mfa_codes = generate_mfa_codes()
                 self.request.user.otp.recovery_codes = mfa_codes
@@ -171,4 +176,5 @@ class MFAView(FormView):
                 request=self.request,
                 user=self.request.user,
             )
+
         return render(self.request, self.template_name, context)

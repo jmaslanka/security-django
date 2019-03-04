@@ -88,7 +88,7 @@ class MFASetupForm(forms.Form):
 
         totp = TOTP(self.cleaned_data.get('secret', ''))
 
-        if self.cleaned_data.get('code', '') == totp.now():
+        if totp.verify(self.cleaned_data.get('code', '')):
             return
 
         raise forms.ValidationError(

@@ -1,7 +1,9 @@
 version: '3.6'
 services:
+  redis:
+    image: redis:5.0-alpine
   nginx:
-    image: 413915321176.dkr.ecr.eu-central-1.amazonaws.com/manager/nginx:${RELEASE}
+    image: nginx:alpine
     build:
       context: .
       dockerfile: ./docker/nginx/Dockerfile
@@ -12,7 +14,6 @@ services:
     depends_on:
       - django
   django:
-    image: 413915321176.dkr.ecr.eu-central-1.amazonaws.com/manager/django:${RELEASE}
     build:
       context: .
       dockerfile: ./docker/django/Dockerfile
@@ -32,7 +33,11 @@ services:
       - aws_static_secret
       - recaptcha_private_key
   bootstrap:
-    image: 413915321176.dkr.ecr.eu-central-1.amazonaws.com/manager/django:${RELEASE}
+    build:
+      context: .
+      dockerfile: ./docker/django/Dockerfile
+      args:
+        - DJANGO_ENV=prod
     command: python src/manage.py bootstrap
     env_file: .env
     networks:

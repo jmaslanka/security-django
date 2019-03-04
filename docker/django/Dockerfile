@@ -20,7 +20,7 @@ WORKDIR /code
 COPY requirements/ requirements/
 
 RUN pip install --upgrade pip \
-	&& pip install -r requirements/$DJANGO_ENV.txt
+    && pip install --no-cache-dir -r requirements/$DJANGO_ENV.txt
 
 COPY . /code/
 
@@ -35,5 +35,4 @@ RUN adduser --disabled-password --gecos '' django \
 
 USER django
 
-ENV PYTHONPATH $PYTHONPATH:src
 CMD uwsgi --ini=./uwsgi.ini
