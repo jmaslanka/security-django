@@ -1,5 +1,7 @@
 from pyotp import TOTP
 
+from django.contrib.admin.forms import AdminAuthenticationForm
+from django.contrib.auth import authenticate
 from django.contrib.auth.forms import (
     UserCreationForm,
     AuthenticationForm,
@@ -7,10 +9,38 @@ from django.contrib.auth.forms import (
 from django import forms
 from django.forms import ValidationError
 from django.utils.translation import gettext_lazy as _
+from django.views.decorators.debug import sensitive_variables
 
 from project.utils import is_valid_recaptcha
 from .models import User
 from .utils import is_valid_mfa_code
+
+
+class MFAAdminAuthenticationForm(AdminAuthenticationForm):
+    code = forms.RegexField(
+        label=_('OTP code'),
+        required=False,
+        regex=r'^[0-9]{6}$|^[a-zA-Z0-9]{10}$',
+    )
+
+    @sensitive_variables('password')
+    def clean(self):
+        username = self.cleaned_data.get('username')
+        password = self.cleaned_data.get('password')
+        code = self.cleaned_data.get('code')
+
+        if username and password:
+            self.user_cache = authenticate(
+                self.request, username=username, password=password)
+
+            if self.user_cache is None:
+                raise self.get_invalid_login_error()
+            else:
+                if not is_valid_mfa_code(self.user_cache, code):
+                    raise forms.ValidationError(_('Invalid OTP code.'))
+                self.confirm_login_allowed(self.user_cache)
+
+        return self.cleaned_data
 
 
 class RegistrationForm(UserCreationForm):

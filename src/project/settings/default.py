@@ -40,7 +40,7 @@ LOCAL_APPS = [
 ]
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    'project.apps.AdminConfig',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -49,6 +49,7 @@ INSTALLED_APPS = [
 
     'django_extensions',
     'crispy_forms',
+    'admin_honeypot',
 ] + LOCAL_APPS
 
 MIDDLEWARE = [
@@ -106,7 +107,7 @@ LOGOUT_REDIRECT_URL = 'homepage'
 MFA_APPLICATION_NAME = 'DjangoButtermilk'
 
 PASSWORD_HASHERS = [
-    'project.utils.Argon2PasswordHasher',
+    'auth_ex.hashers.Argon2PasswordHasher',
 ]
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -127,6 +128,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 PASSWORD_RESET_TIMEOUT_DAYS = 1
+ADMIN_HONEYPOT_EMAIL_ADMINS = False
 
 
 # ---------------------------------------------------------------

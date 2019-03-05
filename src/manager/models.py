@@ -6,7 +6,7 @@ from django.db.models.functions import Now
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from model_utils import Choices
+from project.utils import upload_to_classname_uuid
 
 
 class Safe(models.Model):
@@ -25,15 +25,13 @@ class Safe(models.Model):
         verbose_name=_('owner'),
         related_name='safes',
     )
-    name = models.CharField(
-        _('name'),
-        max_length=30,
-        default='Safe',
+    image = models.ImageField(
+        _('image'),
+        upload_to=upload_to_classname_uuid,
         blank=True,
     )
-    description = models.CharField(
-        _('description'),
-        max_length=255,
+    data = models.TextField(
+        _('encrypted data'),
         blank=True,
     )
     date_created = models.DateTimeField(
@@ -45,6 +43,13 @@ class Safe(models.Model):
         default=timezone.now,
         blank=True,
     )
+
+    class Meta:
+        verbose_name = _('Safe')
+        verbose_name_plural = _('Safes')
+
+    def __str__(self):
+        return f'{self.id} (UserID: {self.owner_id})'
 
     def update_last_access_time(self):
         self.__class__.objects.filter(id=self.id).update(last_accessed=Now())
@@ -66,49 +71,14 @@ class SafeItem(models.Model):
         verbose_name=_('safe'),
         related_name='items',
     )
-    notes = models.TextField(
-        _('notes'),
-        max_length=5000,
+    data = models.TextField(
+        _('encrypted data'),
         blank=True,
     )
 
+    class Meta:
+        verbose_name = _('Safe item')
+        verbose_name_plural = _('Safe items')
 
-class ItemField(models.Model):
-    '''
-    Model representing single field in safe item.
-    '''
-
-    TYPES = Choices(
-        ('text', _('Text')),
-        ('password', _('Password')),
-        ('date', _('Date')),
-        ('email', _('Email')),
-        ('url', _('URL')),
-        ('otp', _('One-Time Password')),
-    )
-
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
-    item = models.ForeignKey(
-        SafeItem,
-        on_delete=models.CASCADE,
-        verbose_name=_('safe item'),
-        related_name='fields',
-    )
-    type = models.CharField(
-        _('type'),
-        max_length=24,
-        choices=TYPES,
-    )
-    name = models.CharField(
-        _('name'),
-        max_length=30,
-        blank=True,
-    )
-    value = models.CharField(
-        _('value'),
-        max_length=255,
-    )
+    def __str__(self):
+        return f'{self.id} (SafeID: {self.safe_id})'

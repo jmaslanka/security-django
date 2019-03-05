@@ -10,6 +10,7 @@ from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.views.decorators.cache import never_cache
+from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import (
     TemplateView,
     FormView,
@@ -34,6 +35,9 @@ from .utils import (
 )
 
 
+@method_decorator(
+    sensitive_post_parameters('password1', 'password2'),
+    name='dispatch')
 class RegistrationView(CreateView):
     model = User
     form_class = RegistrationForm
@@ -46,7 +50,9 @@ class RegistrationView(CreateView):
         return kwargs
 
 
-@method_decorator(never_cache, name='dispatch')
+@method_decorator(
+    [never_cache, sensitive_post_parameters('password')],
+    name='dispatch')
 class LoginView(LoginView):
     form_class = LoginForm
     template_name = 'auth/login.html'
@@ -98,6 +104,7 @@ class SettingsView(TemplateView):
         return kwargs
 
 
+@method_decorator(never_cache, name='dispatch')
 class MFAView(FormView):
     template_name = 'auth/mfa.html'
 

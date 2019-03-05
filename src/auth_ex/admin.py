@@ -2,9 +2,11 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as djUserAdmin
 from django.utils.translation import gettext_lazy as _
 
+from project.mixins import ReadOnlyAdminMixin
 from .models import (
-    User,
     Log,
+    User,
+    UserOTP,
 )
 
 
@@ -34,7 +36,6 @@ class UserAdmin(djUserAdmin):
         (_('Permissions'), {
             'fields': (
                 'is_active', 'is_staff', 'is_superuser',
-                'groups', 'user_permissions',
             )
         }),
         (_('Important dates'), {
@@ -43,24 +44,44 @@ class UserAdmin(djUserAdmin):
     )
 
 
-class LogsAdmin(admin.ModelAdmin):
+class UserOTPAdmin(admin.ModelAdmin):
     list_display = (
-        'type',
-        'user_id',
-        'date',
+        'user',
+        'recovery_codes_count',
+        'created',
     )
-    list_filter = (
-        'type',
-    )
+    list_select_related = ('user',)
     search_fields = (
         'user__id',
         'user__email',
+        'user__last_name',
+    )
+
+    def recovery_codes_count(self, obj):
+        return len(obj.recovery_codes)
+    recovery_codes_count.short_description = _('Recovery codes')
+
+
+class LogAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
+    list_display = (
+        'type',
+        'user',
+        'date',
+        'ip',
         'location',
     )
-    ordering = (
-        '-date',
+    list_filter = ('type',)
+    list_select_related = ('user',)
+    search_fields = (
+        'user__id',
+        'user__email',
+        'user__last_name',
+        'ip',
+        'location',
     )
+    ordering = ('-date',)
 
 
 admin.site.register(User, UserAdmin)
-admin.site.register(Log, LogsAdmin)
+admin.site.register(UserOTP, UserOTPAdmin)
+admin.site.register(Log, LogAdmin)
