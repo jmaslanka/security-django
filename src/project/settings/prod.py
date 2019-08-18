@@ -22,7 +22,7 @@ DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 
-if env('SENTRY_URL', False):
+if env('SENTRY_URL', default=False):
     INSTALLED_APPS += ('raven.contrib.django.raven_compat',)
 
     RAVEN_CONFIG = {

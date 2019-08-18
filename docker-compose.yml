@@ -3,12 +3,13 @@ services:
   redis:
     image: redis:5.0-alpine
   postgres:
-    image: postgres:alpine
+    image: postgres:11.5-alpine
     environment:
       - PGDATA=/var/lib/postgresql/data
     volumes:
       - pg-data:/var/lib/postgresql/data
   django:
+    image: django
     build:
       context: .
       dockerfile: ./docker/django/Dockerfile
@@ -25,6 +26,18 @@ services:
       - .:/code
       - static:/static
       - media:/media
+  bootstrap:
+    image: django
+    command: python src/manage.py bootstrap
+    env_file: .env
+    depends_on:
+      - postgres
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 10
+        window: 20s
 volumes:
   pg-data:
     driver: local
