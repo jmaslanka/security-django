@@ -4,6 +4,7 @@ import logging
 
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
+from django.views.decorators.debug import sensitive_variables
 
 from zxcvbn import zxcvbn
 
@@ -17,6 +18,7 @@ class ComplexityValidator:
     Password must have at least score of 3 (good).
     '''
 
+    @sensitive_variables('password', 'result')
     def validate(self, password, user=None):
         result = zxcvbn(password)
 
@@ -36,6 +38,7 @@ class HaveIBeenPwnedValidator:
     '''
     URL = 'https://api.pwnedpasswords.com/range/{hash_prefix}'
 
+    @sensitive_variables('password', 'password_hash')
     def validate(self, password, user=None):
         password_hash = sha1(password.encode('utf-8')).hexdigest()
         password_prefix = password_hash[:5]

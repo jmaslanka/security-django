@@ -6,7 +6,7 @@ from django.contrib.auth.views import LoginView
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.views.decorators.cache import never_cache
@@ -76,8 +76,10 @@ class LoginView(LoginView):
         if email:
             user = User.objects.filter(email=email).first()
 
+        log_type = Log.TYPES.invalid_login_mfa if form.errors.get('code') \
+            else Log.TYPES.invalid_login
         create_log_entry(
-            log_type=Log.TYPES.invalid_login,
+            log_type=log_type,
             request=self.request,
             user=user,
         )
@@ -140,7 +142,7 @@ class MFAView(FormView):
                     request=self.request,
                     user=self.request.user,
                 )
-                return redirect(reverse('auth:mfa'))
+                return redirect('auth:mfa')
 
             elif 'new_codes' in self.request.POST:
                 mfa_codes = generate_mfa_codes()

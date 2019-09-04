@@ -49,7 +49,6 @@ INSTALLED_APPS = [
 
     'django_extensions',
     'crispy_forms',
-    'admin_honeypot',
 ] + LOCAL_APPS
 
 MIDDLEWARE = [
@@ -60,6 +59,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'auth_ex.middleware.DeviceCookieMiddleware',
     # TODO add referrer policy
 ]
 
@@ -104,7 +104,7 @@ AUTH_USER_MODEL = 'auth_ex.User'
 LOGIN_URL = 'auth:login'
 LOGIN_REDIRECT_URL = 'homepage'
 LOGOUT_REDIRECT_URL = 'homepage'
-MFA_APPLICATION_NAME = 'DjangoButtermilk'
+MFA_APPLICATION_NAME = 'ButtermilkSecurity'
 
 PASSWORD_HASHERS = [
     'auth_ex.hashers.Argon2PasswordHasher',
@@ -128,7 +128,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 PASSWORD_RESET_TIMEOUT_DAYS = 1
-ADMIN_HONEYPOT_EMAIL_ADMINS = False
 
 
 # ---------------------------------------------------------------
@@ -158,15 +157,27 @@ EMAIL_PORT = env('EMAIL_PORT', default=587)
 EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=False)
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default='root@localhost')
 
+AUTHENTICATION_BACKENDS = [
+    'auth_ex.backends.ModelBackend',
+]
+
+SESSION_COOKIE_NAME = 'PHPSESSID'  # :D
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_SAMESITE = 'Strict'
 
 CSRF_COOKIE_SAMESITE = 'Strict'
+CSRF_COOKIE_HTTPONLY = True
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
 
 RECAPTCHA_PUBLIC_KEY = env('RECAPTCHA_PUBLIC_KEY', default='')
 RECAPTCHA_PRIVATE_KEY = env('RECAPTCHA_PRIVATE_KEY', default='')
+
+DEVICE_COOKIE_NAME = 'device-uid'
+DEVICE_COOKIE_SALT = env('DEVICE_COOKIE_SALT', default='341eYcyZoWIDF0gP')
+DEVICE_COOKIE_PERIOD = 8 * 60 * 60  # 8 hours
+DEVICE_COOKIE_TRIES = 10
+DEVICE_COOKIE_AGE = 12 * 30 * 24 * 60 * 60  # 360 days
 
 GEOIP_PATH = env('GEOIP_PATH', default=root('project/geolite2/'))

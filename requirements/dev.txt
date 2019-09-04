@@ -11,14 +11,13 @@ cffi==1.12.3              # via argon2-cffi
 chardet==3.0.4            # via requests
 click==7.0                # via pip-tools
 decorator==4.4.0          # via ipython, traitlets
-django-admin-honeypot==1.1.0
 django-cacheops==4.1
 django-crispy-forms==1.7.2
 django-environ==0.4.5
 django-extensions==2.2.1
 django-ipware==2.1.0
 django-model-utils==3.2.0
-django==2.2.4
+django==2.2.5
 funcy==1.13               # via django-cacheops
 geoip2==2.9.0
 idna==2.8                 # via requests
@@ -53,4 +52,4 @@ wcwidth==0.1.7            # via prompt-toolkit
 zxcvbn==4.4.28
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==41.1.0        # via ipdb, ipython
+# setuptools==41.2.0        # via ipdb, ipython

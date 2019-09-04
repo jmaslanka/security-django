@@ -1,7 +1,4 @@
-# Project
+# Django Security
 
-### Random project to experiment with Django and security.  
 
-![SSL configuration](https://raw.githubusercontent.com/jmaslanka/security-django/develop/src/project/static/project/images/ssl_report.png)
-
-![Security headers](https://raw.githubusercontent.com/jmaslanka/security-django/develop/src/project/static/project/images/headers.png)
+#### This application tries to imitate Password Manager - implementing features from OWASP level 2/3. I will try to implement both “common” solutions that could be used elsewhere as well as hardcore security features that might not be super user-friendly.

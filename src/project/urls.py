@@ -7,7 +7,6 @@ from django.views.static import serve
 from .views import HomepageView
 
 urlpatterns = [
-    path('admin/', include('admin_honeypot.urls', namespace='admin_honeypot')),
     path('superuser-panel/', admin.site.urls),
 
     path('', HomepageView.as_view(), name='homepage'),

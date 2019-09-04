@@ -28,6 +28,9 @@ def is_valid_recaptcha(request) -> bool:
     '''
     Checking recaptcha response with Google servers.
     '''
+    if settings.DEBUG:
+        return True
+
     if not request:
         return False
 

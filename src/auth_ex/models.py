@@ -99,6 +99,39 @@ class User(AbstractBaseUser, PermissionsMixin):
         return hasattr(self, 'otp')
 
 
+class UserOTP(models.Model):
+    '''
+    Model to keep information on user's 2FA.
+    '''
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        related_name='otp',
+        verbose_name=_('user'),
+        on_delete=models.CASCADE,
+    )
+    secret_key = models.CharField(
+        _('secret_key'),
+        max_length=32,
+    )
+    recovery_codes = ArrayField(
+        models.CharField(max_length=10),
+        size=5,
+        blank=True,
+    )
+    created = models.DateTimeField(
+        _('create'),
+        auto_now_add=True,
+    )
+
+    class Meta:
+        verbose_name = _('User OTP')
+        verbose_name_plural = _('Users OTP')
+
+    def __str__(self):
+        return self.user_id
+
+
 class Log(models.Model):
     '''
     Model to log important user actions.
@@ -107,6 +140,7 @@ class Log(models.Model):
     TYPES = Choices(
         ('login', _('Login')),
         ('invalid_login', _('Invalid login')),
+        ('invalid_login_mfa', _('Invalid MFA code (login)')),
         ('password_change', _('Password change')),
         ('forgot_pass_request', _('Forgot password request')),
         ('forgot_pass_done', _('Forgot password done')),
@@ -160,34 +194,19 @@ class Log(models.Model):
         return f'{self.type} {self.user_id}'
 
 
-class UserOTP(models.Model):
-    '''
-    Model to keep information on user's 2FA.
-    '''
-
-    user = models.OneToOneField(
+class FailedAuthentication(models.Model):
+    user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        related_name='otp',
         verbose_name=_('user'),
+        related_name='failed_authentications',
         on_delete=models.CASCADE,
     )
-    secret_key = models.CharField(
-        _('secret_key'),
-        max_length=32,
-    )
-    recovery_codes = ArrayField(
-        models.CharField(max_length=10),
-        size=5,
-        blank=True,
-    )
-    created = models.DateTimeField(
-        _('create'),
-        auto_now_add=True,
-    )
+    date = models.DateTimeField(_('date'), auto_now_add=True)
+    cookie = models.CharField(_('cookie'), max_length=200, null=True)
 
     class Meta:
-        verbose_name = _('User OTP')
-        verbose_name_plural = _('Users OTP')
-
-    def __str__(self):
-        return self.user_id
+        verbose_name = _('Failed authentication')
+        verbose_name_plural = _('Failed authentications')
+        indexes = [
+            models.Index(fields=['user', 'cookie', '-date'])
+        ]
