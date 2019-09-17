@@ -11,6 +11,10 @@ urlpatterns = [
 
     path('', HomepageView.as_view(), name='homepage'),
     path('auth/', include('auth_ex.urls', namespace='auth')),
+    path('users/', include('users.urls', namespace='users')),
+
+    path('api/auth/v1/', include('auth_ex.api.urls', namespace='v1')),
+    # path('api/v1/', include('users.api.urls', namespace='v1')),
 ]
 
 if settings.DEBUG:

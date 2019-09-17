@@ -34,13 +34,14 @@ SITE_ID = env.int('SITE_ID', default=1)
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost'])
 
 LOCAL_APPS = [
-    'project',
+    'config',
     'auth_ex',
+    'users',
     'manager',
 ]
 
 INSTALLED_APPS = [
-    'project.apps.AdminConfig',
+    'config.apps.AdminConfig',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -49,6 +50,7 @@ INSTALLED_APPS = [
 
     'django_extensions',
     'crispy_forms',
+    'rest_framework',
 ] + LOCAL_APPS
 
 MIDDLEWARE = [
@@ -63,8 +65,8 @@ MIDDLEWARE = [
     # TODO add referrer policy
 ]
 
-ROOT_URLCONF = 'project.urls'
-WSGI_APPLICATION = 'project.wsgi.application'
+ROOT_URLCONF = 'config.urls'
+WSGI_APPLICATION = 'config.wsgi.application'
 
 TEMPLATES = [
     {
@@ -97,10 +99,41 @@ CACHEOPS_DEFAULTS = {'timeout': 60 * 60}
 CACHEOPS = {}
 
 
+# ------------------------ API ----------------------------------
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.MultiPartParser',
+    ],
+    'URL_FORMAT_OVERRIDE': None,
+    'FORMAT_SUFFIX_KWARG': None,
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAdminUser',
+    ],
+    # Versioning
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
+    'DEFAULT_VERSION': 'v1',
+    'ALLOWED_VERSIONS': ('v1',),
+    # Pagination
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 20,
+    # Filtering & Ordering
+    'SEARCH_PARAM': 'q',
+    'ORDERING_PARAM': 'order',
+}
+
+
 # ----------------------- AUTH ----------------------------------
 
 
-AUTH_USER_MODEL = 'auth_ex.User'
+AUTH_USER_MODEL = 'users.User'
 LOGIN_URL = 'auth:login'
 LOGIN_REDIRECT_URL = 'homepage'
 LOGOUT_REDIRECT_URL = 'homepage'
@@ -129,6 +162,41 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 PASSWORD_RESET_TIMEOUT_DAYS = 1
 
+AUTHENTICATION_BACKENDS = [
+    'auth_ex.backends.ModelBackend',
+]
+
+# Changing session's cookie name to mislead potential attacker
+SESSION_COOKIE_NAME = 'PHPSESSID'  # :D
+
+# Session expires when users leaves the browser
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# Cookie won't be sent in cross-origin requests
+SESSION_COOKIE_SAMESITE = 'Strict'
+
+# Cookie won't be sent in cross-origin requests
+CSRF_COOKIE_SAMESITE = 'Strict'
+
+# Cookie cannot be accessed with Javascript
+CSRF_COOKIE_HTTPONLY = True
+
+# Security headers
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+
+# Google reCAPTCHA
+RECAPTCHA_PUBLIC_KEY = env('RECAPTCHA_PUBLIC_KEY', default='')
+RECAPTCHA_PRIVATE_KEY = env('RECAPTCHA_PRIVATE_KEY', default='')
+
+# Device Cookie - Rate Limiting per device
+DEVICE_COOKIE_NAME = 'device-uid'
+DEVICE_COOKIE_SALT = env('DEVICE_COOKIE_SALT', default='341eYcyZoWIDF0gP')
+DEVICE_COOKIE_PERIOD = 8 * 60 * 60  # 8 hours
+DEVICE_COOKIE_TRIES = 10
+DEVICE_COOKIE_AGE = 12 * 30 * 24 * 60 * 60  # 360 days
+
 
 # ---------------------------------------------------------------
 
@@ -139,7 +207,6 @@ USE_L10N = True
 USE_TZ = True
 
 
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'  # noqa
 STATIC_URL = env('STATIC_URL', default='/static/')
 STATIC_ROOT = env('STATIC_ROOT', default=(root - 2)('static'))
 MEDIA_URL = env('MEDIA_URL', default='/media/')
@@ -157,27 +224,4 @@ EMAIL_PORT = env('EMAIL_PORT', default=587)
 EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', default=False)
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default='root@localhost')
 
-AUTHENTICATION_BACKENDS = [
-    'auth_ex.backends.ModelBackend',
-]
-
-SESSION_COOKIE_NAME = 'PHPSESSID'  # :D
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-SESSION_COOKIE_SAMESITE = 'Strict'
-
-CSRF_COOKIE_SAMESITE = 'Strict'
-CSRF_COOKIE_HTTPONLY = True
-SECURE_BROWSER_XSS_FILTER = True
-SECURE_CONTENT_TYPE_NOSNIFF = True
-X_FRAME_OPTIONS = 'DENY'
-
-RECAPTCHA_PUBLIC_KEY = env('RECAPTCHA_PUBLIC_KEY', default='')
-RECAPTCHA_PRIVATE_KEY = env('RECAPTCHA_PRIVATE_KEY', default='')
-
-DEVICE_COOKIE_NAME = 'device-uid'
-DEVICE_COOKIE_SALT = env('DEVICE_COOKIE_SALT', default='341eYcyZoWIDF0gP')
-DEVICE_COOKIE_PERIOD = 8 * 60 * 60  # 8 hours
-DEVICE_COOKIE_TRIES = 10
-DEVICE_COOKIE_AGE = 12 * 30 * 24 * 60 * 60  # 360 days
-
-GEOIP_PATH = env('GEOIP_PATH', default=root('project/geolite2/'))
+GEOIP_PATH = env('GEOIP_PATH', default=root('config/geolite2/'))

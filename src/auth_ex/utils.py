@@ -7,7 +7,7 @@ from django.contrib.auth import get_user_model
 from django.db.models import Count, Q
 from django.utils import timezone
 
-from project.utils import get_client_details
+from config.utils import get_client_details
 from .models import Log, FailedAuthentication
 
 

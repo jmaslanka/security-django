@@ -1,13 +1,17 @@
 from .default import *  # noqa
 
+# Cookies will be sent only through HTTPS
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
-CSRF_COOKIE_HTTPONLY = True
+
+# Redirect HTTP to HTTPS
 SECURE_SSL_REDIRECT = True
 
+# HSTS header settings
 SECURE_HSTS_SECONDS = env.int('HSTS_SECONDS', default=0)
 SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool('HSTS_SUBDOMAINS', default=True)
 
+# AWS settings
 AWS_ACCESS_KEY_ID = env('AWS_STATIC_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = env('AWS_STATIC_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')

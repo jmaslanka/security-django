@@ -6,7 +6,7 @@ from django.db.models.functions import Now
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from project.utils import upload_to_classname_uuid
+from config.utils import upload_to_classname_uuid
 
 
 class Safe(models.Model):

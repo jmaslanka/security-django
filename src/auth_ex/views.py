@@ -3,7 +3,6 @@ import pyotp
 from django.conf import settings
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.views import LoginView
-from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
@@ -11,18 +10,10 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
 from django.views.decorators.cache import never_cache
 from django.views.decorators.debug import sensitive_post_parameters
-from django.views.generic import (
-    TemplateView,
-    FormView,
-)
+from django.views.generic import FormView
 from django.views.generic.edit import CreateView
 
-
-from .models import (
-    User,
-    Log,
-    UserOTP,
-)
+from .models import Log, UserOTP
 from .forms import (
     RegistrationForm,
     LoginForm,
@@ -33,6 +24,7 @@ from .utils import (
     create_log_entry,
     generate_mfa_codes,
 )
+from users.models import User
 
 
 @method_decorator(
@@ -85,25 +77,6 @@ class LoginView(LoginView):
         )
 
         return super().form_invalid(form)
-
-
-class SettingsView(TemplateView):
-    template_name = 'auth/settings.html'
-    logs_paginate_by = 8
-
-    def get_context_data(self, **kwargs):
-        kwargs = super().get_context_data(**kwargs)
-
-        paginator = Paginator(
-            self.request.user.logs.order_by('-date'),
-            self.logs_paginate_by,
-        )
-
-        kwargs['logs'] = paginator.get_page(
-            self.request.GET.get('logs-page')
-        )
-
-        return kwargs
 
 
 @method_decorator(never_cache, name='dispatch')

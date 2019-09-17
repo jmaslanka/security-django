@@ -10,7 +10,7 @@ from django import forms
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.debug import sensitive_variables
 
-from project.utils import is_valid_recaptcha
+from config.utils import is_valid_recaptcha
 from .utils import is_valid_mfa_code, validate_device_cookie
 
 
